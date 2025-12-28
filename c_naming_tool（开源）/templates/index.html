@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2196F3">
+    <title>C语言变量定义工具</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 头部 -->
+        <header class="app-header">
+            <h1>🔧 C变量命名工具</h1>
+            <p class="subtitle">嵌入式开发必备</p>
+        </header>
+
+        <!-- 主导航 -->
+        <nav class="main-nav">
+            <a href="/variable" class="nav-item">
+                <span class="icon">📝</span>
+                <span class="text">变量</span>
+            </a>
+            <a href="/array" class="nav-item">
+                <span class="icon">📊</span>
+                <span class="text">数组</span>
+            </a>
+            <a href="/struct" class="nav-item">
+                <span class="icon">🏗️</span>
+                <span class="text">结构体</span>
+            </a>
+            <a href="/pointer" class="nav-item">
+                <span class="icon">👉</span>
+                <span class="text">指针</span>
+            </a>
+            <a href="/function" class="nav-item">
+                <span class="icon">⚡</span>
+                <span class="text">函数</span>
+            </a>
+            <a href="/translator" class="nav-item">
+                <span class="icon">🌐</span>
+                <span class="text">翻译</span>
+            </a>
+        </nav>
+
+        <!-- 功能卡片 -->
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <h3>智能翻译</h3>
+                <p>中文转英文，199个专业术语库</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>命名规范</h3>
+                <p>多种命名风格可选</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>移动优化</h3>
+                <p>可添加到主屏幕</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔌</div>
+                <h3>离线可用</h3>
+                <p>无需网络连接</p>
+            </div>
+        </div>
+
+        <!-- 安装提示 -->
+        <div id="install-prompt" class="install-prompt" style="display: none;">
+            <div class="install-content">
+                <p>📱 添加到主屏幕，像APP一样使用</p>
+                <button id="install-button" class="btn-primary">立即添加</button>
+                <button id="install-close" class="btn-text">稍后</button>
+            </div>
+        </div>
+
+        <!-- 底部信息 -->
+        <footer class="app-footer">
+            <p>版本 v1.0.0 Web</p>
+            <p>支持 iOS / Android / Windows / macOS</p>
+            <p class="online-status">
+                <span id="status-indicator" class="status-online"></span>
+                <span id="status-text">在线</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        // PWA安装
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-prompt').style.display = 'block';
+        });
+        
+        document.getElementById('install-button')?.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                document.getElementById('install-prompt').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('install-close')?.addEventListener('click', () => {
+            document.getElementById('install-prompt').style.display = 'none';
+        });
+        
+        // Service Worker注册
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('Service Worker已注册'))
+                .catch(err => console.log('Service Worker注册失败:', err));
+        }
+        
+        // 在线/离线状态
+        function updateOnlineStatus() {
+            const indicator = document.getElementById('status-indicator');
+            const text = document.getElementById('status-text');
+            if (navigator.onLine) {
+                indicator.className = 'status-online';
+                text.textContent = '在线';
+            } else {
+                indicator.className = 'status-offline';
+                text.textContent = '离线';
+            }
+        }
+        
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+    </script>
+</body>
+</html>

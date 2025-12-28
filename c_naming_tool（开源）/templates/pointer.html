@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指针定义</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="page-header">
+            <a href="/" class="back-btn">←</a>
+            <h1>👉 指针定义</h1>
+        </header>
+        <div class="content">
+            <div class="card">
+                <div class="form-group">
+                    <label>指针类型</label>
+                    <select id="pointer-type" class="input-field">
+                        <option value="普通指针">普通指针</option>
+                        <option value="函数指针">函数指针</option>
+                        <option value="数组指针">数组指针</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>基础类型</label>
+                    <select id="base-type" class="input-field">
+                        <option value="uint8_t">uint8_t</option>
+                        <option value="uint16_t">uint16_t</option>
+                        <option value="uint32_t">uint32_t</option>
+                        <option value="void">void</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>中文名称</label>
+                    <div class="input-with-button">
+                        <input type="text" id="chinese-name" placeholder="例如：缓冲区指针" class="input-field">
+                        <button onclick="translateName()" class="btn-icon">🌐</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>英文名称</label>
+                    <input type="text" id="english-name" placeholder="例如：buffer" class="input-field">
+                </div>
+                <div class="form-group">
+                    <label>指针级别</label>
+                    <select id="level" class="input-field">
+                        <option value="1">一级指针 (*)</option>
+                        <option value="2">二级指针 (**)</option>
+                        <option value="3">三级指针 (***)</option>
+                    </select>
+                </div>
+                <button onclick="generatePointer()" class="btn-primary btn-block">⚡ 生成代码</button>
+            </div>
+            <div id="result-card" class="card" style="display: none;">
+                <h2>生成的代码</h2>
+                <pre id="generated-code" class="code-block"></pre>
+                <button onclick="copyCode()" class="btn-secondary btn-block">📋 复制代码</button>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/app.js"></script>
+    <script>
+        let generatedCode = '';
+        async function translateName() {
+            const chinese = document.getElementById('chinese-name').value.trim();
+            if (!chinese) return alert('请先输入中文名称');
+            showLoading();
+            try {
+                const resp = await fetch('/api/translate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: chinese})
+                });
+                const data = await resp.json();
+                if (data.success) document.getElementById('english-name').value = data.primary;
+            } finally { hideLoading(); }
+        }
+        async function generatePointer() {
+            const english = document.getElementById('english-name').value.trim();
+            if (!english) return alert('请输入英文名称');
+            showLoading();
+            try {
+                const resp = await fetch('/api/generate/pointer', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        pointer_type: document.getElementById('pointer-type').value,
+                        base_type: document.getElementById('base-type').value,
+                        chinese_name: document.getElementById('chinese-name').value,
+                        english_name: english,
+                        scope: 'global',
+                        level: parseInt(document.getElementById('level').value)
+                    })
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    generatedCode = data.code;
+                    document.getElementById('generated-code').textContent = data.code;
+                    document.getElementById('result-card').style.display = 'block';
+                }
+            } finally { hideLoading(); }
+        }
+        function copyCode() {
+            copyToClipboard(generatedCode);
+            showToast('代码已复制');
+        }
+    </script>
+</body>
+</html>

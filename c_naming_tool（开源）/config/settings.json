@@ -1,0 +1,34 @@
+{
+  "app": {
+    "name": "C Variable Naming Tool",
+    "version": "1.0.0",
+    "theme": "light",
+    "language": "zh_CN"
+  },
+  "naming_rules": {
+    "modifier_prefixes": {
+      "全局变量": "g",
+      "静态变量": "s",
+      "局部变量": "",
+      "常量": "c",
+      "volatile": "v"
+    },
+    "struct_prefix": "st",
+    "union_prefix": "un",
+    "enum_prefix": "e",
+    "separator": "_"
+  },
+  "ui": {
+    "window_width": 1200,
+    "window_height": 800,
+    "sidebar_width": 200,
+    "font_family": "Segoe UI",
+    "code_font_family": "Consolas",
+    "font_size": 10
+  },
+  "translation": {
+    "cache_enabled": true,
+    "cache_max_size": 10000,
+    "prefer_abbreviation": false
+  }
+}

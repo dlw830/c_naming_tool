@@ -1,0 +1,26 @@
+[
+  {
+    "name": "ADC配置模板",
+    "category": "外设配置",
+    "description": "ADC外设的基本配置结构",
+    "code": "typedef struct {\n    uint8_t channel;        // 通道号 [0-15]\n    uint32_t sample_rate;   // 采样率(Hz) [1K-1M]\n    uint8_t resolution;     // 分辨率(bit) [8/10/12]\n} adc_config_t;\n\nadc_config_t g_st_adc_config;",
+    "created_at": "2025-12-16T23:17:32.569496",
+    "updated_at": "2025-12-16T23:17:32.569514"
+  },
+  {
+    "name": "UART配置模板",
+    "category": "外设配置",
+    "description": "UART串口配置结构",
+    "code": "typedef struct {\n    uint32_t baud_rate;     // 波特率 [9600-115200]\n    uint8_t data_bits;      // 数据位 [5-8]\n    uint8_t stop_bits;      // 停止位 [1-2]\n    uint8_t parity;         // 校验位 [0:无, 1:奇, 2:偶]\n} uart_config_t;\n\nuart_config_t g_st_uart_config;",
+    "created_at": "2025-12-16T23:17:32.569516",
+    "updated_at": "2025-12-16T23:17:32.569516"
+  },
+  {
+    "name": "PID控制器模板",
+    "category": "算法",
+    "description": "PID控制器参数结构",
+    "code": "typedef struct {\n    float kp;               // 比例系数\n    float ki;               // 积分系数\n    float kd;               // 微分系数\n    float setpoint;         // 目标值\n    float output;           // 输出值\n} pid_controller_t;\n\npid_controller_t g_st_pid_controller;",
+    "created_at": "2025-12-16T23:17:32.569517",
+    "updated_at": "2025-12-16T23:17:32.569518"
+  }
+]

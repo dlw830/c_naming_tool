@@ -1,0 +1,136 @@
+{
+  "type_ranges": {
+    "int8_t": {
+      "bytes": 1,
+      "min": -128,
+      "max": 127,
+      "signed": true,
+      "description": "8位有符号整型"
+    },
+    "uint8_t": {
+      "bytes": 1,
+      "min": 0,
+      "max": 255,
+      "signed": false,
+      "description": "8位无符号整型"
+    },
+    "int16_t": {
+      "bytes": 2,
+      "min": -32768,
+      "max": 32767,
+      "signed": true,
+      "description": "16位有符号整型"
+    },
+    "uint16_t": {
+      "bytes": 2,
+      "min": 0,
+      "max": 65535,
+      "signed": false,
+      "description": "16位无符号整型"
+    },
+    "int32_t": {
+      "bytes": 4,
+      "min": -2147483648,
+      "max": 2147483647,
+      "signed": true,
+      "description": "32位有符号整型"
+    },
+    "uint32_t": {
+      "bytes": 4,
+      "min": 0,
+      "max": 4294967295,
+      "signed": false,
+      "description": "32位无符号整型"
+    },
+    "int64_t": {
+      "bytes": 8,
+      "min": -9223372036854775808,
+      "max": 9223372036854775807,
+      "signed": true,
+      "description": "64位有符号整型"
+    },
+    "uint64_t": {
+      "bytes": 8,
+      "min": 0,
+      "max": 18446744073709551615,
+      "signed": false,
+      "description": "64位无符号整型"
+    },
+    "float": {
+      "bytes": 4,
+      "min": -3.402823e+38,
+      "max": 3.402823e+38,
+      "min_positive": 1.175494e-38,
+      "precision": 7,
+      "decimal_places": "6-7",
+      "signed": true,
+      "description": "单精度浮点型",
+      "notes": [
+        "避免直接比较浮点数是否相等",
+        "累加误差可能导致精度损失",
+        "适用于一般精度要求的科学计算"
+      ]
+    },
+    "double": {
+      "bytes": 8,
+      "min": -1.797693e+308,
+      "max": 1.797693e+308,
+      "min_positive": 2.225074e-308,
+      "precision": 15,
+      "decimal_places": "15-16",
+      "signed": true,
+      "description": "双精度浮点型",
+      "notes": [
+        "提供更高的精度",
+        "适用于高精度科学计算",
+        "内存占用是float的两倍"
+      ]
+    },
+    "char": {
+      "bytes": 1,
+      "min": -128,
+      "max": 127,
+      "signed": true,
+      "description": "字符型"
+    },
+    "bool": {
+      "bytes": 1,
+      "min": 0,
+      "max": 1,
+      "signed": false,
+      "description": "布尔型",
+      "notes": [
+        "通常用于表示真/假",
+        "建议只使用0和1"
+      ]
+    }
+  },
+  "type_prefixes": {
+    "int8_t": "i8",
+    "uint8_t": "u8",
+    "int16_t": "i16",
+    "uint16_t": "u16",
+    "int32_t": "i32",
+    "uint32_t": "u32",
+    "int64_t": "i64",
+    "uint64_t": "u64",
+    "float": "f",
+    "double": "d",
+    "char": "c",
+    "bool": "b"
+  },
+  "array_prefixes": {
+    "int8_t": "i8a",
+    "uint8_t": "u8a",
+    "int16_t": "i16a",
+    "uint16_t": "u16a",
+    "int32_t": "i32a",
+    "uint32_t": "u32a",
+    "int64_t": "i64a",
+    "uint64_t": "u64a",
+    "float": "fa",
+    "double": "da",
+    "char": "ca",
+    "bool": "ba"
+  }
+}

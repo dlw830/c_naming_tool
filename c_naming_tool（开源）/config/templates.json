@@ -1,0 +1,314 @@
+[
+  {
+    "name": "ADC配置模板",
+    "category": "外设配置",
+    "description": "ADC外设的基本配置结构",
+    "code": "typedef struct {\n    uint8_t channel;        // 通道号 [0-15]\n    uint32_t sample_rate;   // 采样率(Hz) [1K-1M]\n    uint8_t resolution;     // 分辨率(bit) [8/10/12]\n    uint8_t align;          // 对齐方式 [0:左对齐, 1:右对齐]\n} adc_config_t;\n\nadc_config_t g_st_adc_config = {0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "UART配置模板",
+    "category": "外设配置",
+    "description": "UART串口配置结构",
+    "code": "typedef struct {\n    uint32_t baud_rate;     // 波特率 [9600-115200]\n    uint8_t data_bits;      // 数据位 [5-8]\n    uint8_t stop_bits;      // 停止位 [1-2]\n    uint8_t parity;         // 校验位 [0:无, 1:奇, 2:偶]\n    uint8_t flow_ctrl;      // 流控 [0:无, 1:硬件, 2:软件]\n} uart_config_t;\n\nuart_config_t g_st_uart_config = {115200, 8, 1, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "SPI配置模板",
+    "category": "外设配置",
+    "description": "SPI接口配置结构",
+    "code": "typedef struct {\n    uint32_t clock_speed;   // 时钟频率(Hz) [100K-50M]\n    uint8_t mode;           // SPI模式 [0-3]\n    uint8_t bit_order;      // 位序 [0:MSB, 1:LSB]\n    uint8_t cs_polarity;    // CS极性 [0:低有效, 1:高有效]\n    uint8_t data_size;      // 数据位宽 [8/16]\n} spi_config_t;\n\nspi_config_t g_st_spi_config = {1000000, 0, 0, 0, 8};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "I2C配置模板",
+    "category": "外设配置",
+    "description": "I2C总线配置结构",
+    "code": "typedef struct {\n    uint32_t clock_speed;   // 时钟频率(Hz) [100K/400K]\n    uint8_t addr_mode;      // 地址模式 [0:7位, 1:10位]\n    uint8_t own_addr;       // 本机地址\n    uint8_t ack_enable;     // 应答使能 [0:禁用, 1:使能]\n} i2c_config_t;\n\ni2c_config_t g_st_i2c_config = {100000, 0, 0x50, 1};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "CAN配置模板",
+    "category": "外设配置",
+    "description": "CAN总线配置结构",
+    "code": "typedef struct {\n    uint32_t baud_rate;     // 波特率 [125K/250K/500K/1M]\n    uint8_t mode;           // 工作模式 [0:正常, 1:环回, 2:静默]\n    uint32_t filter_id;     // 过滤器ID\n    uint32_t filter_mask;   // 过滤器掩码\n} can_config_t;\n\ncan_config_t g_st_can_config = {500000, 0, 0x00, 0x00};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "PWM配置模板",
+    "category": "外设配置",
+    "description": "PWM输出配置结构",
+    "code": "typedef struct {\n    uint32_t frequency;     // 频率(Hz) [1-100K]\n    uint8_t duty_cycle;     // 占空比(%) [0-100]\n    uint8_t polarity;       // 极性 [0:正常, 1:反转]\n    uint8_t channel;        // 通道号 [0-3]\n} pwm_config_t;\n\npwm_config_t g_st_pwm_config = {1000, 50, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "定时器配置模板",
+    "category": "外设配置",
+    "description": "通用定时器配置结构",
+    "code": "typedef struct {\n    uint32_t period;        // 周期(us)\n    uint32_t prescaler;     // 预分频值\n    uint8_t mode;           // 模式 [0:单次, 1:周期]\n    uint8_t interrupt_en;   // 中断使能 [0:禁用, 1:使能]\n} timer_config_t;\n\ntimer_config_t g_st_timer_config = {1000, 72, 1, 1};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "DMA配置模板",
+    "category": "外设配置",
+    "description": "DMA传输配置结构",
+    "code": "typedef struct {\n    uint32_t src_addr;      // 源地址\n    uint32_t dst_addr;      // 目标地址\n    uint32_t data_size;     // 数据大小\n    uint8_t direction;      // 方向 [0:外设到内存, 1:内存到外设, 2:内存到内存]\n    uint8_t mode;           // 模式 [0:正常, 1:循环]\n    uint8_t priority;       // 优先级 [0:低, 1:中, 2:高, 3:极高]\n} dma_config_t;\n\ndma_config_t g_st_dma_config = {0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "看门狗配置模板",
+    "category": "外设配置",
+    "description": "看门狗定时器配置结构",
+    "code": "typedef struct {\n    uint32_t timeout;       // 超时时间(ms)\n    uint8_t mode;           // 模式 [0:独立, 1:窗口]\n    uint32_t window;        // 窗口值(仅窗口模式)\n    uint8_t auto_reload;    // 自动重载 [0:禁用, 1:使能]\n} watchdog_config_t;\n\nwatchdog_config_t g_st_watchdog_config = {1000, 0, 0, 1};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "RTC配置模板",
+    "category": "外设配置",
+    "description": "实时时钟配置结构",
+    "code": "typedef struct {\n    uint8_t hour;           // 小时 [0-23]\n    uint8_t minute;         // 分钟 [0-59]\n    uint8_t second;         // 秒 [0-59]\n    uint8_t year;           // 年 [0-99]\n    uint8_t month;          // 月 [1-12]\n    uint8_t day;            // 日 [1-31]\n    uint8_t weekday;        // 星期 [0-6]\n} rtc_time_t;\n\nrtc_time_t g_st_rtc_time = {0, 0, 0, 25, 1, 1, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "GPIO配置模板",
+    "category": "外设配置",
+    "description": "GPIO引脚配置结构",
+    "code": "typedef struct {\n    uint8_t port;           // 端口 [A-K]\n    uint8_t pin;            // 引脚 [0-15]\n    uint8_t mode;           // 模式 [0:输入, 1:输出, 2:复用, 3:模拟]\n    uint8_t pull;           // 上下拉 [0:无, 1:上拉, 2:下拉]\n    uint8_t speed;          // 速度 [0:低, 1:中, 2:高, 3:极高]\n} gpio_config_t;\n\ngpio_config_t g_st_gpio_config = {0, 0, 1, 0, 2};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "PID控制器模板",
+    "category": "算法",
+    "description": "PID控制器参数结构",
+    "code": "typedef struct {\n    float kp;               // 比例系数\n    float ki;               // 积分系数\n    float kd;               // 微分系数\n    float setpoint;         // 目标值\n    float output;           // 输出值\n    float integral;         // 积分累积\n    float prev_error;       // 上次误差\n    float output_max;       // 输出上限\n    float output_min;       // 输出下限\n} pid_controller_t;\n\npid_controller_t g_st_pid_ctrl = {1.0f, 0.1f, 0.05f, 0, 0, 0, 0, 100.0f, -100.0f};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "卡尔曼滤波模板",
+    "category": "算法",
+    "description": "卡尔曼滤波器结构",
+    "code": "typedef struct {\n    float x;                // 状态估计值\n    float p;                // 估计误差协方差\n    float q;                // 过程噪声协方差\n    float r;                // 测量噪声协方差\n    float k;                // 卡尔曼增益\n} kalman_filter_t;\n\nkalman_filter_t g_st_kalman_filter = {0, 1.0f, 0.001f, 0.1f, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "滑动平均滤波模板",
+    "category": "算法",
+    "description": "滑动平均滤波器结构",
+    "code": "typedef struct {\n    float buffer[16];       // 数据缓冲区\n    uint8_t index;          // 当前索引\n    uint8_t count;          // 有效数据数量\n    uint8_t size;           // 缓冲区大小\n    float sum;              // 数据总和\n} moving_avg_filter_t;\n\nmoving_avg_filter_t g_st_ma_filter = {{0}, 0, 0, 16, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "FFT配置模板",
+    "category": "算法",
+    "description": "FFT变换参数结构",
+    "code": "typedef struct {\n    uint16_t fft_size;      // FFT点数 [64/128/256/512/1024]\n    float sampling_freq;    // 采样频率(Hz)\n    float *input_real;      // 输入实部\n    float *input_imag;      // 输入虚部\n    float *output_mag;      // 输出幅值\n    float *output_phase;    // 输出相位\n} fft_config_t;\n\nfft_config_t g_st_fft_config = {256, 1000.0f, NULL, NULL, NULL, NULL};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "环形缓冲区模板",
+    "category": "数据结构",
+    "description": "环形缓冲区结构",
+    "code": "typedef struct {\n    uint8_t *buffer;        // 数据缓冲区\n    uint16_t size;          // 缓冲区大小\n    uint16_t head;          // 头指针\n    uint16_t tail;          // 尾指针\n    uint16_t count;         // 数据数量\n} ring_buffer_t;\n\nstatic uint8_t s_au8_buffer[256];\nring_buffer_t g_st_ring_buf = {s_au8_buffer, 256, 0, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "FIFO队列模板",
+    "category": "数据结构",
+    "description": "FIFO队列结构",
+    "code": "typedef struct {\n    void **items;           // 元素数组\n    uint16_t capacity;      // 队列容量\n    uint16_t front;         // 队首索引\n    uint16_t rear;          // 队尾索引\n    uint16_t size;          // 当前大小\n} fifo_queue_t;\n\nfifo_queue_t g_st_fifo_queue = {NULL, 0, 0, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "链表节点模板",
+    "category": "数据结构",
+    "description": "单向链表节点结构",
+    "code": "typedef struct list_node {\n    void *data;             // 数据指针\n    struct list_node *next; // 下一节点\n} list_node_t;\n\ntypedef struct {\n    list_node_t *head;      // 链表头\n    list_node_t *tail;      // 链表尾\n    uint16_t size;          // 节点数量\n} linked_list_t;\n\nlinked_list_t g_st_linked_list = {NULL, NULL, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "哈希表模板",
+    "category": "数据结构",
+    "description": "简单哈希表结构",
+    "code": "typedef struct hash_entry {\n    uint32_t key;           // 键\n    void *value;            // 值\n    struct hash_entry *next;// 冲突链表\n} hash_entry_t;\n\ntypedef struct {\n    hash_entry_t **buckets; // 桶数组\n    uint16_t capacity;      // 容量\n    uint16_t size;          // 当前元素数\n} hash_table_t;\n\nhash_table_t g_st_hash_table = {NULL, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "传感器数据模板",
+    "category": "数据结构",
+    "description": "通用传感器数据结构",
+    "code": "typedef struct {\n    float value;            // 测量值\n    float min_value;        // 最小值\n    float max_value;        // 最大值\n    uint32_t timestamp;     // 时间戳(ms)\n    uint8_t status;         // 状态 [0:正常, 1:告警, 2:故障]\n    uint8_t valid;          // 有效标志\n} sensor_data_t;\n\nsensor_data_t g_st_sensor_data = {0, -100.0f, 100.0f, 0, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "IMU数据模板",
+    "category": "传感器",
+    "description": "IMU惯性测量单元数据",
+    "code": "typedef struct {\n    float accel_x;          // 加速度X(m/s²)\n    float accel_y;          // 加速度Y(m/s²)\n    float accel_z;          // 加速度Z(m/s²)\n    float gyro_x;           // 角速度X(°/s)\n    float gyro_y;           // 角速度Y(°/s)\n    float gyro_z;           // 角速度Z(°/s)\n    float mag_x;            // 磁场X(μT)\n    float mag_y;            // 磁场Y(μT)\n    float mag_z;            // 磁场Z(μT)\n    uint32_t timestamp;     // 时间戳(ms)\n} imu_data_t;\n\nimu_data_t g_st_imu_data = {0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "GPS数据模板",
+    "category": "传感器",
+    "description": "GPS定位数据结构",
+    "code": "typedef struct {\n    double latitude;        // 纬度(°)\n    double longitude;       // 经度(°)\n    float altitude;         // 海拔(m)\n    float speed;            // 速度(km/h)\n    float course;           // 航向(°)\n    uint8_t satellites;     // 卫星数量\n    uint8_t fix_quality;    // 定位质量 [0:无效, 1:GPS, 2:DGPS]\n    uint32_t timestamp;     // 时间戳\n} gps_data_t;\n\ngps_data_t g_st_gps_data = {0, 0, 0, 0, 0, 0, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "温湿度传感器模板",
+    "category": "传感器",
+    "description": "温湿度传感器数据",
+    "code": "typedef struct {\n    float temperature;      // 温度(℃) [-40~80]\n    float humidity;         // 湿度(%) [0~100]\n    uint8_t temp_status;    // 温度状态 [0:正常, 1:过高, 2:过低]\n    uint8_t humi_status;    // 湿度状态 [0:正常, 1:过高, 2:过低]\n    uint32_t update_time;   // 更新时间(ms)\n} temp_humi_data_t;\n\ntemp_humi_data_t g_st_temp_humi = {25.0f, 50.0f, 0, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "网络配置模板",
+    "category": "网络",
+    "description": "网络接口配置结构",
+    "code": "typedef struct {\n    uint8_t ip_addr[4];     // IP地址\n    uint8_t netmask[4];     // 子网掩码\n    uint8_t gateway[4];     // 网关\n    uint8_t dns[4];         // DNS服务器\n    uint8_t mac_addr[6];    // MAC地址\n    uint8_t dhcp_enable;    // DHCP使能\n} network_config_t;\n\nnetwork_config_t g_st_net_config = {\n    {192, 168, 1, 100},\n    {255, 255, 255, 0},\n    {192, 168, 1, 1},\n    {8, 8, 8, 8},\n    {0x00, 0x11, 0x22, 0x33, 0x44, 0x55},\n    0\n};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "TCP连接模板",
+    "category": "网络",
+    "description": "TCP连接信息结构",
+    "code": "typedef struct {\n    int socket_fd;          // 套接字描述符\n    uint8_t remote_ip[4];   // 远程IP\n    uint16_t remote_port;   // 远程端口\n    uint16_t local_port;    // 本地端口\n    uint8_t state;          // 连接状态 [0:关闭, 1:连接中, 2:已连接]\n    uint32_t tx_bytes;      // 发送字节数\n    uint32_t rx_bytes;      // 接收字节数\n} tcp_connection_t;\n\ntcp_connection_t g_st_tcp_conn = {-1, {0}, 0, 0, 0, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "MQTT配置模板",
+    "category": "网络",
+    "description": "MQTT客户端配置",
+    "code": "typedef struct {\n    char broker_addr[64];   // 服务器地址\n    uint16_t broker_port;   // 服务器端口\n    char client_id[32];     // 客户端ID\n    char username[32];      // 用户名\n    char password[32];      // 密码\n    uint16_t keepalive;     // 保活时间(s)\n    uint8_t qos;            // QoS等级 [0/1/2]\n    uint8_t clean_session;  // 清除会话\n} mqtt_config_t;\n\nmqtt_config_t g_st_mqtt_config = {\n    \"mqtt.broker.com\",\n    1883,\n    \"client001\",\n    \"user\",\n    \"pass\",\n    60,\n    1,\n    1\n};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "文件系统信息模板",
+    "category": "文件系统",
+    "description": "文件系统状态信息",
+    "code": "typedef struct {\n    char fs_type[16];       // 文件系统类型\n    uint32_t total_size;    // 总容量(KB)\n    uint32_t used_size;     // 已用容量(KB)\n    uint32_t free_size;     // 剩余容量(KB)\n    uint16_t file_count;    // 文件数量\n    uint8_t mounted;        // 挂载状态\n    uint8_t read_only;      // 只读标志\n} fs_info_t;\n\nfs_info_t g_st_fs_info = {\"FAT32\", 0, 0, 0, 0, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "文件描述符模板",
+    "category": "文件系统",
+    "description": "文件操作描述符",
+    "code": "typedef struct {\n    char filename[64];      // 文件名\n    uint32_t file_size;     // 文件大小(Byte)\n    uint32_t file_pos;      // 当前位置\n    uint8_t mode;           // 打开模式 [0:只读, 1:只写, 2:读写]\n    uint8_t is_open;        // 打开标志\n    void *handle;           // 文件句柄\n} file_descriptor_t;\n\nfile_descriptor_t g_st_file_desc = {\"\", 0, 0, 0, 0, NULL};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "任务控制块模板",
+    "category": "RTOS",
+    "description": "RTOS任务控制块",
+    "code": "typedef struct {\n    char name[16];          // 任务名称\n    void *stack_ptr;        // 栈指针\n    uint16_t stack_size;    // 栈大小\n    uint8_t priority;       // 优先级 [0-255]\n    uint8_t state;          // 状态 [0:就绪, 1:运行, 2:挂起, 3:阻塞]\n    uint32_t run_time;      // 运行时间(ms)\n    void (*task_func)(void*);// 任务函数\n    void *param;            // 任务参数\n} task_control_block_t;\n\ntask_control_block_t g_st_task_tcb = {\"\", NULL, 0, 0, 0, 0, NULL, NULL};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "信号量模板",
+    "category": "RTOS",
+    "description": "信号量控制结构",
+    "code": "typedef struct {\n    uint16_t count;         // 计数值\n    uint16_t max_count;     // 最大计数\n    void *wait_list;        // 等待队列\n    char name[16];          // 信号量名称\n    uint8_t type;           // 类型 [0:二值, 1:计数]\n} semaphore_t;\n\nsemaphore_t g_st_semaphore = {0, 1, NULL, \"sem\", 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "互斥量模板",
+    "category": "RTOS",
+    "description": "互斥量控制结构",
+    "code": "typedef struct {\n    uint8_t locked;         // 锁定状态\n    void *owner;            // 持有者\n    uint8_t priority;       // 优先级继承值\n    void *wait_list;        // 等待队列\n    char name[16];          // 互斥量名称\n} mutex_t;\n\nmutex_t g_st_mutex = {0, NULL, 0, NULL, \"mtx\"};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "消息队列模板",
+    "category": "RTOS",
+    "description": "消息队列结构",
+    "code": "typedef struct {\n    void **msg_pool;        // 消息池\n    uint16_t msg_size;      // 消息大小\n    uint16_t queue_size;    // 队列容量\n    uint16_t msg_count;     // 当前消息数\n    uint16_t head;          // 队首\n    uint16_t tail;          // 队尾\n    char name[16];          // 队列名称\n} msg_queue_t;\n\nmsg_queue_t g_st_msg_queue = {NULL, 0, 0, 0, 0, 0, \"msgq\"};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "事件标志组模板",
+    "category": "RTOS",
+    "description": "事件标志组结构",
+    "code": "typedef struct {\n    uint32_t flags;         // 事件标志位\n    void *wait_list;        // 等待队列\n    char name[16];          // 事件组名称\n} event_group_t;\n\nevent_group_t g_st_event_group = {0, NULL, \"evt\"};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "电源管理模板",
+    "category": "系统",
+    "description": "电源管理配置结构",
+    "code": "typedef struct {\n    uint8_t power_mode;     // 电源模式 [0:正常, 1:低功耗, 2:深度睡眠]\n    uint32_t sleep_time;    // 睡眠时间(ms)\n    uint8_t wakeup_source;  // 唤醒源 [bit0:按键, bit1:定时器, bit2:外部中断]\n    float battery_voltage;  // 电池电压(V)\n    uint8_t battery_level;  // 电量(%) [0-100]\n    uint8_t charging;       // 充电状态\n} power_mgmt_t;\n\npower_mgmt_t g_st_power_mgmt = {0, 0, 0, 3.7f, 100, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "日志系统模板",
+    "category": "系统",
+    "description": "日志记录配置",
+    "code": "typedef struct {\n    uint8_t log_level;      // 日志级别 [0:DEBUG, 1:INFO, 2:WARN, 3:ERROR]\n    uint8_t output_mode;    // 输出模式 [bit0:串口, bit1:文件, bit2:网络]\n    char log_file[64];      // 日志文件名\n    uint32_t max_size;      // 最大文件大小(KB)\n    uint8_t enable;         // 日志使能\n} log_config_t;\n\nlog_config_t g_st_log_config = {1, 0x01, \"system.log\", 1024, 1};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "系统状态模板",
+    "category": "系统",
+    "description": "系统运行状态信息",
+    "code": "typedef struct {\n    uint32_t uptime;        // 运行时间(s)\n    uint32_t cpu_usage;     // CPU使用率(%)\n    uint32_t mem_total;     // 总内存(KB)\n    uint32_t mem_used;      // 已用内存(KB)\n    uint16_t task_count;    // 任务数量\n    uint8_t cpu_temp;       // CPU温度(℃)\n    uint8_t system_error;   // 系统错误码\n} system_status_t;\n\nsystem_status_t g_st_sys_status = {0, 0, 0, 0, 0, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "错误记录模板",
+    "category": "系统",
+    "description": "错误信息记录结构",
+    "code": "typedef struct {\n    uint16_t error_code;    // 错误码\n    char error_msg[64];     // 错误信息\n    char module_name[32];   // 模块名称\n    uint32_t timestamp;     // 时间戳\n    uint8_t severity;       // 严重程度 [0:警告, 1:错误, 2:致命]\n    uint32_t file_line;     // 文件行号\n} error_record_t;\n\nerror_record_t g_st_error_record = {0, \"\", \"\", 0, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "OTA升级模板",
+    "category": "固件",
+    "description": "OTA固件升级配置",
+    "code": "typedef struct {\n    char server_url[128];   // 服务器地址\n    char firmware_ver[16];  // 固件版本\n    uint32_t firmware_size; // 固件大小(Byte)\n    uint32_t download_size; // 已下载大小\n    uint8_t update_status;  // 更新状态 [0:空闲, 1:下载中, 2:校验中, 3:升级中]\n    uint8_t verify_method;  // 校验方式 [0:CRC32, 1:MD5, 2:SHA256]\n    uint8_t auto_reboot;    // 自动重启\n} ota_config_t;\n\nota_config_t g_st_ota_config = {\"\", \"v1.0.0\", 0, 0, 0, 0, 1};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  },
+  {
+    "name": "Bootloader信息模板",
+    "category": "固件",
+    "description": "Bootloader配置信息",
+    "code": "typedef struct {\n    uint32_t magic_number;  // 魔术字\n    char version[16];       // 版本号\n    uint32_t app_start_addr;// 应用程序起始地址\n    uint32_t app_size;      // 应用程序大小\n    uint32_t crc32;         // CRC32校验值\n    uint8_t boot_flag;      // 启动标志 [0:APP, 1:Bootloader]\n    uint8_t update_flag;    // 更新标志\n} bootloader_info_t;\n\nbootloader_info_t g_st_boot_info = {0x12345678, \"v1.0\", 0x08004000, 0, 0, 0, 0};",
+    "created_at": "2025-12-17T10:00:00.000000",
+    "updated_at": "2025-12-17T10:00:00.000000"
+  }
+]

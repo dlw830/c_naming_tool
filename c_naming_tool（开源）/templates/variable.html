@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>变量定义 - C变量命名</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="page-header">
+            <a href="/" class="back-btn">←</a>
+            <h1>📝 变量定义</h1>
+        </header>
+
+        <div class="content">
+            <div class="card">
+                <div class="form-group">
+                    <label>变量类型</label>
+                    <select id="var-type" class="input-field">
+                        <option value="uint8_t">uint8_t (无符号8位)</option>
+                        <option value="int8_t">int8_t (有符号8位)</option>
+                        <option value="uint16_t">uint16_t (无符号16位)</option>
+                        <option value="int16_t">int16_t (有符号16位)</option>
+                        <option value="uint32_t">uint32_t (无符号32位)</option>
+                        <option value="int32_t">int32_t (有符号32位)</option>
+                        <option value="float">float (浮点型)</option>
+                        <option value="double">double (双精度)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>中文名称</label>
+                    <div class="input-with-button">
+                        <input type="text" id="chinese-name" placeholder="例如：温度值" class="input-field">
+                        <button onclick="translateName()" class="btn-icon">🌐</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>英文名称</label>
+                    <input type="text" id="english-name" placeholder="例如：temperature" class="input-field">
+                </div>
+
+                <div class="form-group">
+                    <label>作用域</label>
+                    <select id="scope" class="input-field">
+                        <option value="global">全局变量 (g_)</option>
+                        <option value="static">静态变量 (s_)</option>
+                        <option value="local">局部变量 (l_)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="is-const">
+                        <span>const (常量)</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="is-volatile">
+                        <span>volatile (易变)</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>初始值（可选）</label>
+                    <input type="text" id="initial-value" placeholder="例如：0" class="input-field">
+                </div>
+
+                <button onclick="generateVariable()" class="btn-primary btn-block">⚡ 生成代码</button>
+            </div>
+
+            <div id="result-card" class="card" style="display: none;">
+                <h2>生成的代码</h2>
+                <pre id="generated-code" class="code-block"></pre>
+                <button onclick="copyCode()" class="btn-secondary btn-block">📋 复制代码</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        let generatedCode = '';
+
+        async function translateName() {
+            const chinese = document.getElementById('chinese-name').value.trim();
+            if (!chinese) {
+                alert('请先输入中文名称');
+                return;
+            }
+
+            showLoading();
+            try {
+                const response = await fetch('/api/translate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: chinese })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('english-name').value = data.primary;
+                    showToast('翻译成功');
+                }
+            } catch (error) {
+                alert('翻译失败：' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function generateVariable() {
+            const chineseName = document.getElementById('chinese-name').value.trim();
+            const englishName = document.getElementById('english-name').value.trim();
+            
+            if (!englishName) {
+                alert('请输入英文名称');
+                return;
+            }
+
+            showLoading();
+            try {
+                const response = await fetch('/api/generate/variable', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: document.getElementById('var-type').value,
+                        chinese_name: chineseName,
+                        english_name: englishName,
+                        scope: document.getElementById('scope').value,
+                        is_const: document.getElementById('is-const').checked,
+                        is_volatile: document.getElementById('is-volatile').checked,
+                        initial_value: document.getElementById('initial-value').value.trim()
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    generatedCode = data.code;
+                    document.getElementById('generated-code').textContent = data.code;
+                    document.getElementById('result-card').style.display = 'block';
+                    showToast('代码已生成');
+                    
+                    // 滚动到结果
+                    document.getElementById('result-card').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('生成失败：' + (data.error || '未知错误'));
+                }
+            } catch (error) {
+                alert('网络错误：' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function copyCode() {
+            copyToClipboard(generatedCode);
+            showToast('代码已复制到剪贴板');
+        }
+    </script>
+</body>
+</html>

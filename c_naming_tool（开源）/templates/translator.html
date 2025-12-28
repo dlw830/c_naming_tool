@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>翻译工具 - C变量命名</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="page-header">
+            <a href="/" class="back-btn">←</a>
+            <h1>🌐 翻译工具</h1>
+        </header>
+
+        <div class="content">
+            <!-- 单个翻译 -->
+            <div class="card">
+                <h2>快速翻译</h2>
+                <div class="form-group">
+                    <label>中文输入</label>
+                    <input type="text" id="translate-input" placeholder="例如：温度传感器" class="input-field">
+                </div>
+                <button onclick="translate()" class="btn-primary btn-block">🔄 翻译</button>
+                
+                <div id="translate-result" class="result-box" style="display: none;">
+                    <h3>翻译结果</h3>
+                    <div class="result-item">
+                        <label>主要翻译：</label>
+                        <div id="primary-result" class="result-value"></div>
+                    </div>
+                    <div class="result-item">
+                        <label>缩写：</label>
+                        <div id="abbr-result" class="result-value"></div>
+                    </div>
+                    <div class="result-item">
+                        <label>其他建议：</label>
+                        <div id="suggestions-result" class="suggestions-list"></div>
+                    </div>
+                    <button onclick="copyResult()" class="btn-secondary btn-block">📋 复制主要翻译</button>
+                </div>
+            </div>
+
+            <!-- 批量翻译 -->
+            <div class="card">
+                <h2>批量翻译</h2>
+                <div class="form-group">
+                    <label>批量输入（每行一个）</label>
+                    <textarea id="batch-input" rows="5" placeholder="温度&#10;湿度&#10;压力" class="input-field"></textarea>
+                </div>
+                <button onclick="batchTranslate()" class="btn-primary btn-block">🔄 批量翻译</button>
+                
+                <div id="batch-result" class="result-box" style="display: none;">
+                    <h3>批量结果</h3>
+                    <div id="batch-list" class="batch-list"></div>
+                    <button onclick="copyBatchResults()" class="btn-secondary btn-block">📋 复制所有结果</button>
+                </div>
+            </div>
+
+            <!-- 术语搜索 -->
+            <div class="card">
+                <h2>术语搜索</h2>
+                <div class="form-group">
+                    <label>搜索关键词（中文或英文）</label>
+                    <input type="text" id="search-input" placeholder="例如：温度 或 temperature" class="input-field">
+                </div>
+                <button onclick="searchTerms()" class="btn-primary btn-block">🔍 搜索</button>
+                
+                <div id="search-result" class="result-box" style="display: none;">
+                    <h3>搜索结果</h3>
+                    <div id="search-list" class="search-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        let currentPrimary = '';
+        let batchResults = [];
+
+        async function translate() {
+            const input = document.getElementById('translate-input').value.trim();
+            if (!input) {
+                alert('请输入要翻译的文本');
+                return;
+            }
+
+            showLoading();
+            try {
+                const response = await fetch('/api/translate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: input })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    currentPrimary = data.primary;
+                    document.getElementById('primary-result').textContent = data.primary;
+                    document.getElementById('abbr-result').textContent = data.abbreviation || '-';
+                    
+                    const suggestionsList = document.getElementById('suggestions-result');
+                    suggestionsList.innerHTML = '';
+                    (data.suggestions || []).forEach(s => {
+                        const chip = document.createElement('span');
+                        chip.className = 'suggestion-chip';
+                        chip.textContent = `${s.text} (${(s.confidence * 100).toFixed(0)}%)`;
+                        chip.onclick = () => {
+                            document.getElementById('translate-input').value = s.text;
+                            currentPrimary = s.text;
+                            document.getElementById('primary-result').textContent = s.text;
+                        };
+                        suggestionsList.appendChild(chip);
+                    });
+                    
+                    document.getElementById('translate-result').style.display = 'block';
+                } else {
+                    alert('翻译失败：' + (data.error || '未知错误'));
+                }
+            } catch (error) {
+                alert('网络错误：' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function batchTranslate() {
+            const input = document.getElementById('batch-input').value.trim();
+            if (!input) {
+                alert('请输入要翻译的文本');
+                return;
+            }
+
+            const texts = input.split('\n').map(t => t.trim()).filter(t => t);
+            if (texts.length === 0) {
+                alert('没有有效的文本');
+                return;
+            }
+
+            showLoading();
+            try {
+                const response = await fetch('/api/translate/batch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texts })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    batchResults = data.results;
+                    const listDiv = document.getElementById('batch-list');
+                    listDiv.innerHTML = '';
+                    
+                    data.results.forEach((item, index) => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'batch-item';
+                        itemDiv.innerHTML = `
+                            <div class="batch-item-header">
+                                <span class="batch-number">${index + 1}</span>
+                                <strong>${item.input}</strong>
+                            </div>
+                            <div class="batch-item-result">→ ${item.output}</div>
+                        `;
+                        listDiv.appendChild(itemDiv);
+                    });
+                    
+                    document.getElementById('batch-result').style.display = 'block';
+                } else {
+                    alert('批量翻译失败：' + (data.error || '未知错误'));
+                }
+            } catch (error) {
+                alert('网络错误：' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function searchTerms() {
+            const keyword = document.getElementById('search-input').value.trim();
+            if (!keyword) {
+                alert('请输入搜索关键词');
+                return;
+            }
+
+            showLoading();
+            try {
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ keyword })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    const listDiv = document.getElementById('search-list');
+                    listDiv.innerHTML = '';
+                    
+                    if (data.results.length === 0) {
+                        listDiv.innerHTML = '<p class="no-result">未找到匹配的术语</p>';
+                    } else {
+                        data.results.forEach(item => {
+                            const itemDiv = document.createElement('div');
+                            itemDiv.className = 'search-item';
+                            itemDiv.innerHTML = `
+                                <div class="search-item-cn">${item.chinese}</div>
+                                <div class="search-item-en">→ ${item.english}</div>
+                                ${item.abbreviation ? `<div class="search-item-abbr">缩写: ${item.abbreviation}</div>` : ''}
+                            `;
+                            listDiv.appendChild(itemDiv);
+                        });
+                    }
+                    
+                    document.getElementById('search-result').style.display = 'block';
+                } else {
+                    alert('搜索失败：' + (data.error || '未知错误'));
+                }
+            } catch (error) {
+                alert('网络错误：' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function copyResult() {
+            if (currentPrimary) {
+                copyToClipboard(currentPrimary);
+                showToast('已复制：' + currentPrimary);
+            }
+        }
+
+        function copyBatchResults() {
+            const text = batchResults.map(r => r.output).join('\n');
+            copyToClipboard(text);
+            showToast('已复制所有翻译结果');
+        }
+
+        // Enter键触发翻译
+        document.getElementById('translate-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') translate();
+        });
+        
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchTerms();
+        });
+    </script>
+</body>
+</html>

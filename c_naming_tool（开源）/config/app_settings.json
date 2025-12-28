@@ -1,0 +1,34 @@
+{
+  "naming": {
+    "global_prefix": "g_",
+    "static_prefix": "s_",
+    "struct_prefix": "st_",
+    "array_prefix": "a_",
+    "style": "下划线 (_)"
+  },
+  "codegen": {
+    "comment_lang": "中文",
+    "indent": "4空格",
+    "include_range": true,
+    "include_naming": true,
+    "include_memory": true,
+    "auto_align": true
+  },
+  "ui": {
+    "theme": "浅色",
+    "font_size": 13,
+    "code_font_size": 12,
+    "language": "简体中文"
+  },
+  "translation": {
+    "engine": "本地词库",
+    "auto_translate": true,
+    "show_pinyin": true
+  },
+  "advanced": {
+    "max_array_size": 65535,
+    "struct_align": "自然对齐",
+    "debug_mode": false,
+    "auto_save": true
+  }
+}
